@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link href="/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> 
+    <script src="/vendor/swfobject/swfobject.js"></script>
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+  
+  </head>
+  <body>
+    <div id="player"></div>
+    <div id="playlist"></div>
+    <div id="qrcode"></div>
+
+
+  <script type="text/javascript">
+
+    var player_id = "player";
+    var player_elem = $('#' + player_id);
+
+    var params = { allowScriptAccess: "always" };
+    var atts = { id: "player" };
+    swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&version=3", 
+        "player", player_elem.width(), player_elem.height(), "8", null, null, params, atts);
+    
+  </script>
+
+    <script>
+      $(function(){
+        setTimeout(function(){
+          var player = document.getElementById("player");
+      var socket = io.connect('http://localhost:5000');
+      socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'data' });
+      });
+      socket.on('video', function (data) {
+        console.log(data);
+        player.loadVideoById(data.videoid, 5, "large");
+      });
+    }, 1000);
+    });
+
+    </script>
+  </body>
+</html>

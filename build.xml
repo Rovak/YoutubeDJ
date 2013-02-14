@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Socialog">
+    <target name="compass">
+        <exec executable="compass" description="Runs Compass">
+            <arg value="watch" />
+        </exec>
+    </target>
+</project>

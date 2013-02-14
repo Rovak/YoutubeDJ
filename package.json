@@ -1,0 +1,20 @@
+{
+  "name": "dj-razko",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "express"       : "*",
+    "ejs"           : "*",
+    "request"       : "*",
+    "youtube-feeds" : "*",
+    "socket.io"     : "*",
+    "underscore"    : "*",
+    "nconf"         : "*"
+  }, 
+  "devDependencies": {
+    "grunt": "~0.3.17"
+  }
+}

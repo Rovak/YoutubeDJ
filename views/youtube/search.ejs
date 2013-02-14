@@ -1,0 +1,9 @@
+<ul>
+<% for(var i = 0; i < items.length; i++) {%>	
+	<% var item = items[i]; %>
+   <li data="<%= JSON.stringify(item) %>">
+   		<%= item.title %><br>
+   		<img src="<%= item.thumbnail.hqDefault %>">
+   	</li>
+<% } %>
+</ul>

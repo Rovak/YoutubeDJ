@@ -1,0 +1,122 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+
+@import "compass/reset";
+@import "compass/css3/transition";
+@import "compass/css3/images";
+@import "fonts";
+
+body {
+	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	background-color: #001923;
+}
+
+$sidebar-width: 430px;
+
+#player_wrap {
+	position: fixed;
+	left: 10px;
+	top: 10px;
+	bottom: 10px;
+	right: $sidebar-width + 30;
+	border: 4px solid #FFF;
+}
+
+#playlist {
+	width: $sidebar-width;
+	top: 10px;
+	bottom: $sidebar-width + 35;
+	right: 10px;
+	border: 4px solid #FFF;
+	position: fixed;
+	font-family: "HelveticaNeue";
+	overflow: hidden;
+	@include transition(bottom 1s ease-out);
+
+	ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		margin-top: -3px;
+	}
+
+	li {
+		padding: 5px;
+		border-top: 2px solid #000;
+		text-transform: uppercase;
+		margin: 0;
+		height: 85px;
+
+		@include background-image(linear-gradient(#2e2e2e, #1d1d1d));
+	}
+
+	.info {
+		margin: 18px 10px 0 95px;
+		line-height: 20px;
+		white-space: nowrap;
+		overflow: hidden;
+		font-family: Proxima-Nova;
+	}
+
+	.title {
+		color: #FFF;
+		display: block;	
+		font-weight: bold;
+	}
+
+	.artist {
+		color: #0fc7e0;
+		display: block;
+		white-space: nowrap;
+		font-family: Proxima-Nova;
+	}
+
+	div.img {
+		border: 2px solid #FFF;
+		float: left; 
+		width: 75px;
+		height: 75px;
+		background-size: contain !important;
+		background-repeat: no-repeat;
+		background-position: center center;
+		background-color: #000;
+	}
+}
+
+#qrcode {
+	position: fixed;
+	right: 10px;
+	bottom: 10px;
+	width: $sidebar-width;
+	@include transition(bottom 1s ease-out);
+	border: 4px solid #FFF;
+
+	img, canvas {
+		width: $sidebar-width;
+	}
+}
+
+#query {
+	width: 90%;
+	font-size: 26px;
+	padding: 5px;
+}
+
+// States
+body.hide-qr {
+	#qrcode {
+		bottom: -($sidebar-width + 15);
+	}
+
+	#playlist {
+		bottom: 10px;
+	}
+}
+
+body.fullscreen {
+	#player_wrap {
+		right: 10px;
+	}
+}
