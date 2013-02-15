@@ -1,4 +1,4 @@
-var   express     = require('express')
+var   express   = require('express')
     , http      = require('http')
     , server    = require('./server/server')
     , path      = require('path')

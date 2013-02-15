@@ -5,4 +5,9 @@
             <arg value="watch" />
         </exec>
     </target>
+    <target name="docs">
+        <exec executable="jsduck" description="Generate documentation using JSduck">
+            <arg value="" />
+        </exec>
+    </target>
 </project>
