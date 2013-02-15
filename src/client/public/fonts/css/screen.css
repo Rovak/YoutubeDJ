@@ -1,0 +1,207 @@
+@charset "UTF-8";
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+/* line 17, ../../../../lib/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../../lib/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../../lib/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../../lib/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../../lib/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../../lib/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../../lib/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../../lib/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../../lib/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+@font-face {
+  font-family: 'Bebas';
+  src: url("../fonts/BebasNeue-webfont.eot");
+  src: local("¢"), url("../fonts/BebasNeue-webfont.woff") format("woff"), url("../fonts/BebasNeue-webfont.ttf") format("truetype"), url("../fonts/BebasNeue-webfont.svg#webfontAGQ6uv7S") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima-Nova';
+  src: url("../fonts/BebasNeue-webfont.eot");
+  src: local("¢"), url("../fonts/proximanova-regular-webfont.woff") format("woff"), url("../fonts/proximanova-regular-webfont.ttf") format("truetype"), url("../fonts/proximanova-regular-webfont.svg") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* line 11, ../../sass/screen.scss */
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #001923;
+}
+
+/* line 18, ../../sass/screen.scss */
+#player_wrap {
+  position: fixed;
+  left: 10px;
+  top: 10px;
+  bottom: 10px;
+  right: 460px;
+  border: 4px solid #FFF;
+}
+
+/* line 27, ../../sass/screen.scss */
+#playlist {
+  width: 430px;
+  top: 10px;
+  bottom: 465px;
+  right: 10px;
+  border: 4px solid #FFF;
+  position: fixed;
+  font-family: "HelveticaNeue";
+  overflow: hidden;
+  -webkit-transition: bottom 1s ease-out;
+  -moz-transition: bottom 1s ease-out;
+  -o-transition: bottom 1s ease-out;
+  transition: bottom 1s ease-out;
+}
+/* line 38, ../../sass/screen.scss */
+#playlist ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  margin-top: -3px;
+}
+/* line 45, ../../sass/screen.scss */
+#playlist li {
+  padding: 5px;
+  border-top: 2px solid #000;
+  text-transform: uppercase;
+  margin: 0;
+  height: 85px;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #2e2e2e), color-stop(100%, #1d1d1d));
+  background-image: -webkit-linear-gradient(#2e2e2e, #1d1d1d);
+  background-image: -moz-linear-gradient(#2e2e2e, #1d1d1d);
+  background-image: -o-linear-gradient(#2e2e2e, #1d1d1d);
+  background-image: linear-gradient(#2e2e2e, #1d1d1d);
+}
+/* line 55, ../../sass/screen.scss */
+#playlist .info {
+  margin: 18px 10px 0 95px;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  font-family: Proxima-Nova;
+}
+/* line 63, ../../sass/screen.scss */
+#playlist .title {
+  color: #FFF;
+  display: block;
+  font-weight: bold;
+}
+/* line 69, ../../sass/screen.scss */
+#playlist .artist {
+  color: #0fc7e0;
+  display: block;
+  white-space: nowrap;
+  font-family: Proxima-Nova;
+}
+/* line 76, ../../sass/screen.scss */
+#playlist div.img {
+  border: 2px solid #FFF;
+  float: left;
+  width: 75px;
+  height: 75px;
+  background-size: contain !important;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: #000;
+}
+
+/* line 88, ../../sass/screen.scss */
+#qrcode {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  width: 430px;
+  -webkit-transition: bottom 1s ease-out;
+  -moz-transition: bottom 1s ease-out;
+  -o-transition: bottom 1s ease-out;
+  transition: bottom 1s ease-out;
+  border: 4px solid #FFF;
+}
+/* line 96, ../../sass/screen.scss */
+#qrcode img, #qrcode canvas {
+  width: 430px;
+}
+
+/* line 101, ../../sass/screen.scss */
+#query {
+  width: 90%;
+  font-size: 26px;
+  padding: 5px;
+}
+
+/* line 109, ../../sass/screen.scss */
+body.hide-qr #qrcode {
+  bottom: -445px;
+}
+/* line 113, ../../sass/screen.scss */
+body.hide-qr #playlist {
+  bottom: 10px;
+}
+
+/* line 119, ../../sass/screen.scss */
+body.fullscreen #player_wrap {
+  right: 10px;
+}

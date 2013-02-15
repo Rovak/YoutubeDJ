@@ -2,6 +2,11 @@
     "--title": "DJ Razko",
     "--output": "build/api",
     "--": [
-        "src"
+        "src/server",
+        "src/shared",
+        "src/client/controllers",
+        "src/client/client.js",
+        "src/client/public/mobile",
+        "src/client/public/player"
     ]
 }
