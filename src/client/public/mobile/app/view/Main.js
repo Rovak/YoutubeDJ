@@ -1,3 +1,6 @@
+/**
+ * Main view
+ */
 Ext.define('MobileDJ.view.Main', {
     extend: 'Ext.TabPanel',
     config: {

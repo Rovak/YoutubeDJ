@@ -2,7 +2,7 @@ var _ = require('underscore'),
     rooms = {};
 
 /**
- * @class Server.Room
+ * @class Server.model.Room
  *
  * @param {Integer} id
  * @returns {Room}
@@ -54,16 +54,25 @@ function Room(id) {
 }
 
 /**
- * Retrieve a room
+ * @class Server.service.RoomManager
+ */
+var RoomManager = {};
+
+
+/**
+ * Retrieve a room, one will be created when the given ID is not
+ * available
  *
- * @class Server.RoomManager
- *
+ * @method
  * @param {Integer} id
  * @returns {Room}
  */
-exports.getRoom = function(id) {
+RoomManager.getRoom = function(id) {
     if (!rooms[id]) {
         rooms[id] = new Room(id);
     }
     return rooms[id];
 };
+
+
+exports = module.exports = RoomManager;

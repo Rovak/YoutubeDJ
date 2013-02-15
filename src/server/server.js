@@ -46,6 +46,9 @@ Server.onConnection = function(socket) {
     });
 };
 
+/**
+ * @method
+ */
 Server.createServer = function() {
 
     HttpServer = http.createServer();

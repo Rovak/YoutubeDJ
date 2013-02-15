@@ -1,3 +1,6 @@
+/**
+ * Settings page
+ */
 Ext.define('MobileDJ.view.Settings', {
     extend: 'Ext.form.FormPanel',
     xtype: 'settings',

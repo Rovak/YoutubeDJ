@@ -2,7 +2,7 @@ var youtube = require('youtube-feeds')
         , _ = require('underscore');
 
 /**
- * @class Client.controller.SearchController
+ * @class Server.controller.SearchController
  */
 var SearchController = {};
 

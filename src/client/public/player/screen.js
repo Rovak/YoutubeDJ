@@ -5,57 +5,70 @@
         CurrentPlayer,
         playlistView;
 
-    var Screen = (function() {
+    /**
+     * @class Client.service.Screen
+     */
+    var Screen = {};
 
-        return {
-            /**
-             * Set screen state
-             *
-             * @param {SimpleObject} state A key-value pair of new screen configuration
-             */
-            setState: function(state) {
-                for (var key in state) {
-                    var value = state[key];
-                    switch (key) {
-                        case 'qrcode':
-                            $('body').toggleClass('hide-qr', !value);
-                            break;
-                        case 'fullscreen':
-                            $('body').toggleClass('fullscreen', value);
-                            break;
-                        case 'volume':
-                            CurrentPlayer.setVolume(value);
-                            break;
-                        case 'next':
-                            PlayNext();
-                            break;
-                        case 'pause':
-                            CurrentPlayer.Pause();
-                            break;
+    /**
+     * @method
+     */
+    Screen.setState = function(state) {
+        for (var key in state) {
+            var value = state[key];
+            switch (key) {
+                case 'qrcode':
+                    $('body').toggleClass('hide-qr', !value);
+                    break;
+                case 'fullscreen':
+                    $('body').toggleClass('fullscreen', value);
+                    break;
+                case 'volume':
+                    CurrentPlayer.setVolume(value);
+                    break;
+                case 'next':
+                    PlayNext();
+                    break;
+                case 'pause':
+                    CurrentPlayer.Pause();
+                    break;
 
-                    }
-                }
             }
-        };
-    })();
+        }
+    };
 
+    /**
+     * @class Client.model.Video
+     */
     var Video = Backbone.Model.extend({
         defaults: {
             type: 'youtube'
         },
     });
 
+    /**
+     * @class Client.model.Playlist
+     */
     var Playlist = Backbone.Collection.extend({
+        /**
+         * @property {Video} model
+         */
         model: Video,
+
         /**
          * Pop the next video from the playlist
+         *
+         * @method
          * @returns {Video}
          */
         getNextVideo: function() {
             return this.shift();
         },
+
         /**
          * Synchronize the playlist with the backend server
+         *
+         * @method
          */
         sync: function(method, model, options) {
             options = options || {};
@@ -73,20 +86,27 @@
         }
     });
 
-    // Views
+    /**
+     * @class Client.model.PlayListView
+     */
     var PlayListView = Backbone.View.extend({
         /**
-         * Template
+         * Handlebars template
+         *
+         * @property {Function} template
          */
         template: Handlebars.compile($("#playlist_template").html()),
+
         /**
          * @constructor
          */
         initialize: function() {
             this.setPlaylist(new Playlist());
         },
+
         /**
-         * @param {Playlist}
+         * @method
+         * @param {Playlist} playlist
          */
         setPlaylist: function(playlist)
         {
@@ -98,6 +118,7 @@
             this.render();
         },
         /**
+         * @method
          * @return {Playlist}
          */
         getPlaylist: function()
@@ -105,7 +126,9 @@
             return this.playlist;
         },
         /**
+         * Render the current template
          * 
+         * @method
          */
         render: function() {
             this.$el.html(this.template({

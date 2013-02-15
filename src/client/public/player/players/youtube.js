@@ -115,6 +115,7 @@
      * Returns the current state of the player
      *
      * @return {integer}
+     * @method
      */
     YoutubePlayer.prototype.getState = function() {
         return this.currentState;
@@ -122,6 +123,7 @@
 
     /**
      * Set the current state
+     * @method
      */
     YoutubePlayer.prototype.setState = function(newState) {
         console.log("got new state");
@@ -145,6 +147,7 @@
      * Play a video
      *
      * @param {Video} video
+     * @method
      */
     YoutubePlayer.prototype.PlayVideo = function(video) {
         console.log("loading video", video, this.player)
@@ -159,6 +162,7 @@
 
     /**
      * Pause the current player
+     * @method
      */
     YoutubePlayer.prototype.Pause = function() {
         if (this.player) {
