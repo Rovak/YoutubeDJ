@@ -8,8 +8,8 @@ var   express   = require('express')
 // Initialize configuration
 config.env()
       .argv()
-      .overrides(require('./config/server.json'))
-      .defaults(require('./config/defaults.json'));
+      .overrides(require('../config/server.json'))
+      .defaults(require('../config/defaults.json'));
 
 var app = express();
 
@@ -29,10 +29,11 @@ app.configure('development', function() {
 });
 
 // Initialize controllers
-var controllers = fs.readdirSync("./controllers");
+var controllersFolder = "./controllers/";
+var controllers = fs.readdirSync(controllersFolder);
 
 for (i in controllers) {
-    var controllerPath = "./controllers/" + controllers[i];
+    var controllerPath = controllersFolder + controllers[i];
     require(controllerPath)(app);
 }
 
