@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YoutubeDJ">
 
-    <target name="build" depends="docs" />
+    <target name="build" depends="clean,prepare,docs" />
+
+    <target name="clean">
+        <delete dir="build" />
+    </target>
+
+    <target name="prepare">
+        <mkdir dir="build/api" />
+    </target>
 
     <target name="compass">
         <exec executable="compass" description="Runs Compass">
