@@ -1,4 +1,10 @@
+/**
+ * Videoplayer configuration
+ */
 var Player = {
+    /**
+     * @enum
+     */
     State: {
         ENDED: 0,
         PLAYING: 1,
