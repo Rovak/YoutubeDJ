@@ -6,15 +6,18 @@
     "start": "node app"
   },
   "dependencies": {
-    "express"       : "*",
-    "ejs"           : "*",
-    "request"       : "*",
-    "youtube-feeds" : "*",
-    "socket.io"     : "*",
-    "underscore"    : "*",
-    "nconf"         : "*"
-  }, 
+    "express": "*",
+    "ejs": "*",
+    "request": "*",
+    "youtube-feeds": "*",
+    "socket.io": "*",
+    "underscore": "*",
+    "nconf": "*"
+  },
   "devDependencies": {
-    "grunt": "~0.3.17"
+    "grunt": "~0.3.17",
+    "grunt-jsduck": "~0.1.3",
+    "grunt-contrib-clean": "~0.3.2",
+    "grunt-compass": "~0.3.8"
   }
 }
