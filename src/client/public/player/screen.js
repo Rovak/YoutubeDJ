@@ -8,34 +8,44 @@
     /**
      * @class Client.service.Screen
      */
-    var Screen = {};
+    var Screen = _.extend({}, {
 
-    /**
-     * @method
-     */
-    Screen.setState = function(state) {
-        for (var key in state) {
-            var value = state[key];
-            switch (key) {
-                case 'qrcode':
-                    $('body').toggleClass('hide-qr', !value);
-                    break;
-                case 'fullscreen':
-                    $('body').toggleClass('fullscreen', value);
-                    break;
-                case 'volume':
-                    CurrentPlayer.setVolume(value);
-                    break;
-                case 'next':
-                    PlayNext();
-                    break;
-                case 'pause':
-                    CurrentPlayer.Pause();
-                    break;
+        /**
+         * Change the state of the screen
+         *
+         * @method
+         * @param {Object} [state] State configuration
+         * @param {Boolean} [state.qrcode] Show/Hide the onscreen QR Code
+         * @param {Boolean} [state.fullscreen] Toggle the player fullscreen
+         * @param {Number} [state.volume] Set the volume of the player
+         * @param {Boolean} [state.next] Play the next song in the list
+         * @param {Boolean} [state.pause] Pause the player
+         */
+        setState: function(state) {
+            for (var key in state) {
+                var value = state[key];
+                switch (key) {
+                    case 'qrcode':
+                        $('body').toggleClass('hide-qr', !value);
+                        break;
+                    case 'fullscreen':
+                        $('body').toggleClass('fullscreen', value);
+                        break;
+                    case 'volume':
+                        CurrentPlayer.setVolume(value);
+                        break;
+                    case 'next':
+                        PlayNext();
+                        break;
+                    case 'pause':
+                        CurrentPlayer.Pause();
+                        break;
 
+                }
             }
         }
-    };
+
+    });
 
     /**
      * @class Client.model.Video
@@ -43,7 +53,7 @@
     var Video = Backbone.Model.extend({
         defaults: {
             type: 'youtube'
-        },
+        }
     });
 
     /**
@@ -56,7 +66,7 @@
         model: Video,
 
         /**
-         * Pop the next video from the playlist
+         * Pop the next video from the playlist and return it
          *
          * @method
          * @returns {Video}
@@ -70,8 +80,7 @@
          *
          * @method
          */
-        sync: function(method, model, options) {
-            options = options || {};
+        sync: function(){
 
             var me = this,
                     list = [];
@@ -90,6 +99,7 @@
      * @class Client.model.PlayListView
      */
     var PlayListView = Backbone.View.extend({
+
         /**
          * Handlebars template
          *
@@ -127,7 +137,7 @@
         },
         /**
          * Render the current template
-         * 
+         *
          * @method
          */
         render: function() {
@@ -148,9 +158,10 @@
     $(function() {
 
         CurrentPlayer = new VideoPlayers["Youtube"]({ embed: "player" });
-        CurrentPlayer.onVideoEnd = function() {
+        CurrentPlayer.on('videoend', function() {
+            console.log('video ended!')
             PlayNext();
-        };
+        });
 
         socket = io.connect('http://' + socket_server + '/channel');
         socket.emit('join', { room: room_id });

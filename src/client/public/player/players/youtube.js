@@ -31,144 +31,130 @@
         }
     };
 
-
     /**
-     * A reference to the Youtubeplayer
-     *
-     * @property {DocumentElement}
+     * @event ready
+     * Triggers when the Youtube players is fully loaded and ready to use
      */
-    YoutubePlayer.prototype.player = null;
-
     /**
-     * The current state of the player
-     *
-     * @property {integer}
+     * @event statechange
+     * Triggers when the state of the player changes
+     * @param {Number} state New player state
      */
-    YoutubePlayer.prototype.currentState = Player.State.ENDED;
+    _.extend(YoutubePlayer.prototype, Backbone.Events, {
 
-    /**
-     * @method
-     * @param {String} elementId elementId where the player should be created
-     */
-    YoutubePlayer.prototype.embed = function(elementId) {
+        /**
+         * A reference to the Youtubeplayer
+         *
+         * @property {DocumentElement}
+         * @protected
+         */
+        player: null,
 
-        var me      = this,
-            params  = { allowScriptAccess: "always" },
-            atts    = { id: elementId };
+        /**
+         * The current state of the player
+         *
+         * @property {Number}
+         * @protected
+         */
+        currentState: Player.State.ENDED,
 
-        swfobject.embedSWF(
-            "http://www.youtube.com/apiplayer?enablejsapi=1&version=3",
-            elementId, "100%", "100%", "8", null, null, params, atts);
+        /**
+         * @method
+         * @param {String} elementId elementId where the player should be created
+         */
+        embed: function(elementId) {
 
-         // Hook into the onReady callback of the youtube player
-         window.onYouTubePlayerReady = function() {
-            me.player = document.getElementById(elementId)
-            me.player.addEventListener("onStateChange", "onStateChange");
+            var me      = this,
+                params  = { allowScriptAccess: "always" },
+                atts    = { id: elementId };
 
-            window.onStateChange = function(newState) {
-                console.log("state", newState)
-                switch (newState) {
-                    case Youtube.PlayerState.ENDED:
-                        me.setState(Player.State.ENDED);
-                        me.onVideoEnd();
-                        break;
-                    case Youtube.PlayerState.PLAYING:
-                        me.setState(Player.State.PLAYING);
-                        break;
-                    case Youtube.PlayerState.PAUSED:
-                        console.log("no state found");
-                        me.setState(Player.State.PAUSED);
-                        break;
-                    case Youtube.PlayerState.BUFFERING:
-                        me.setState(Player.State.BUFFERING);
-                        break;
-                }
+            swfobject.embedSWF(
+                "http://www.youtube.com/apiplayer?enablejsapi=1&version=3",
+                elementId, "100%", "100%", "8", null, null, params, atts);
+
+             // Hook into the onReady callback of the youtube player
+             window.onYouTubePlayerReady = function() {
+                me.player = document.getElementById(elementId)
+                me.player.addEventListener("onStateChange", "onStateChange");
+                me.trigger('ready');
+
+                window.onStateChange = function(newState) {
+                    switch (newState) {
+                        case Youtube.PlayerState.ENDED:
+                            me.setState(Player.State.ENDED);
+                            me.trigger('videoend');
+                            break;
+                        case Youtube.PlayerState.PLAYING:
+                            me.setState(Player.State.PLAYING);
+                            break;
+                        case Youtube.PlayerState.PAUSED:
+                            me.setState(Player.State.PAUSED);
+                            break;
+                        case Youtube.PlayerState.BUFFERING:
+                            me.setState(Player.State.BUFFERING);
+                            break;
+                    }
+                };
             };
-        };
-    };
-
-    /**
-     * Callback when the player is ready
-     *
-     * @method
-     */
-    YoutubePlayer.prototype.onReady = function(){};
-
-    /**
-     * Callback when a video ends
-     *
-     * @method
-     */
-    YoutubePlayer.prototype.onVideoEnd = function(){};
+        },
 
 
-    /**
-     * Callback whenever a state changes
-     *
-     * @method
-     * @param {integer} newState The new state the player will be in
-     */
-    YoutubePlayer.prototype.onStateChange = function(newState) {};
+        /**
+         * Returns the current state of the player
+         *
+         * @method
+         * @return {integer}
+         */
+        getState: function() {
+            return this.currentState;
+        },
 
+        /**
+         * Set the current state
+         * @method
+         */
+        setState: function(newState) {
+            this.currentState = newState;
+            this.trigger('statechange', newState);
+        },
 
-    /**
-     * Returns the current state of the player
-     *
-     * @return {integer}
-     * @method
-     */
-    YoutubePlayer.prototype.getState = function() {
-        return this.currentState;
-    };
+        /**
+         * Set the volume of the player
+         *
+         * @method
+         * @param {integer} volume Volume between 0-100
+         */
+        setVolume: function(volume) {
+            if (this.player) {
+                this.player.setVolume(volume);
+            }
+        },
 
-    /**
-     * Set the current state
-     * @method
-     */
-    YoutubePlayer.prototype.setState = function(newState) {
-        console.log("got new state");
-        this.currentState = newState;
-        this.onStateChange(newState)
-    };
+        /**
+         * Play a video
+         *
+         * @method
+         * @param {Video} video
+         */
+        PlayVideo: function(video) {
+            if (this.player) {
+                this.player.loadVideoById({
+                    videoId: video.get('id'),
+                    suggestedQuality: Youtube.PlaybackQuality.HD720
+                });
+            }
+        },
 
-    /**
-     * Set the volume of the player
-     *
-     * @param {integer} volume Volume between 0-100
-     * @method
-     */
-    YoutubePlayer.prototype.setVolume = function(volume) {
-        if (this.player) {
-            this.player.setVolume(volume);
+        /**
+         * @method
+         * Pause the current player
+         */
+        Pause: function() {
+            if (this.player) {
+                this.player.pauseVideo();
+            }
         }
-    };
-
-    /**
-     * Play a video
-     *
-     * @param {Video} video
-     * @method
-     */
-    YoutubePlayer.prototype.PlayVideo = function(video) {
-        console.log("loading video", video, this.player)
-        if (this.player) {
-            this.player.loadVideoById({
-                videoId: video.get('id'),
-                suggestedQuality: Youtube.PlaybackQuality.HD720
-            });
-        }
-    };
-
-
-    /**
-     * Pause the current player
-     * @method
-     */
-    YoutubePlayer.prototype.Pause = function() {
-        if (this.player) {
-            this.player.pauseVideo();
-        }
-    };
+    });
 
     VideoPlayers.Youtube = YoutubePlayer;
 
