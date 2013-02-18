@@ -14,7 +14,7 @@
          * Change the state of the screen
          *
          * @method
-         * @param {Object} [state] State configuration
+         * @param {Object} state State configuration
          * @param {Boolean} [state.qrcode] Show/Hide the onscreen QR Code
          * @param {Boolean} [state.fullscreen] Toggle the player fullscreen
          * @param {Number} [state.volume] Set the volume of the player
