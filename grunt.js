@@ -21,7 +21,8 @@ module.exports = function(grunt) {
                     'src/client/controllers',
                     'src/client/client.js',
                     'src/client/public/mobile',
-                    'src/client/public/player'
+                    'src/client/public/scripts/player',
+                    'src/client/public/scripts/screen'
                 ],
                 dest: 'build/api',
                 options: {
