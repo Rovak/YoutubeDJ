@@ -3,6 +3,16 @@
   <head>
     <title>DJ Server</title>
     <link href="/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+    <script>
+        var room_id = '<%= room %>';
+        var app = {
+          host: '<%= host %>'
+        };
+        var socket_server = '<%= socket_server %>';
+        var client_url = 'http://<%= host %>/room/<%= room %>';
+    </script>
+    <script src="http://<%= socket_server %>/socket.io/socket.io.js"></script>
+    <script data-main="/scripts/main" src="/scripts/lib/require.js"></script>
   </head>
   <body>
     <div id="player_wrap">
@@ -11,13 +21,6 @@
     <div id="playlist"></div>
     <div id="qrcode"></div>
 
-    <script src="http://<%= socket_server %>/socket.io/socket.io.js"></script>
-    <script src="/vendor/swfobject/swfobject.js"></script>
-    <script src="/vendor/jquery.min.js"></script>
-    <script src="/vendor/jquery.qrcode.js"></script>
-    <script src="/vendor/underscore.js"></script>
-    <script src="/vendor/backbone.js"></script>
-    <script src="/vendor/handlebars.js"></script>
 
     <!-- Playlist Template -->
     <script type="text/template" id="playlist_template">
@@ -35,17 +38,5 @@
       </ul>
 
     </script>
-
-    <script>
-        var room_id = '<%= room %>';
-        var app = {
-          host: '<%= host %>'
-        };
-        var socket_server = '<%= socket_server %>';
-        var client_url = 'http://<%= host %>/room/<%= room %>';
-    </script>
-    <script src="/player/player.js"></script>
-    <script src="/player/players/youtube.js"></script>
-    <script src="/player/screen.js"></script>
   </body>
 </html>

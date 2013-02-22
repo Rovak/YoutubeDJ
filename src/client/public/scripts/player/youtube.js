@@ -1,4 +1,9 @@
-(function(document, window) {
+define([
+    'backbone',
+    'underscore',
+    'player/player'
+],
+function(Backbone, _, Player){
     "use strict"
 
     var Youtube = {
@@ -156,6 +161,5 @@
         }
     });
 
-    VideoPlayers.Youtube = YoutubePlayer;
-
-})(document, window);
+    return YoutubePlayer;
+});

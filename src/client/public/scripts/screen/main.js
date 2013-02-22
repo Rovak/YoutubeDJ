@@ -1,4 +1,14 @@
-(function(document, window, $) {
+require([
+    'jquery',
+    'handlebars',
+    'underscore',
+    'backbone',
+    'player/youtube',
+    'player/player',
+    'swfobject',
+    'lib/jquery.qrcode'
+],
+function($, Handlebars, _, Backbone, YoutubePlayer, Player, swfobject) {
     "use strict";
 
     var socket,
@@ -9,7 +19,6 @@
      * @class Client.service.Screen
      */
     var Screen = _.extend({}, {
-
         /**
          * Change the state of the screen
          *
@@ -64,7 +73,6 @@
          * @property {Video} model
          */
         model: Video,
-
         /**
          * Pop the next video from the playlist and return it
          *
@@ -74,13 +82,12 @@
         getNextVideo: function() {
             return this.shift();
         },
-
         /**
          * Synchronize the playlist with the backend server
          *
          * @method
          */
-        sync: function(){
+        sync: function() {
 
             var me = this,
                     list = [];
@@ -89,7 +96,7 @@
                 list.push(this.models[i].toJSON());
             }
 
-            $.post('/playlist/' + room_id, { playlist: data }, function(data) {
+            $.post('/playlist/' + room_id, {playlist: data}, function(data) {
                 me.reset(data.list);
             }, 'json');
         }
@@ -99,21 +106,18 @@
      * @class Client.model.PlayListView
      */
     var PlayListView = Backbone.View.extend({
-
         /**
          * Handlebars template
          *
          * @property {Function} template
          */
         template: Handlebars.compile($("#playlist_template").html()),
-
         /**
          * @constructor
          */
         initialize: function() {
             this.setPlaylist(new Playlist());
         },
-
         /**
          * @method
          * @param {Playlist} playlist
@@ -157,14 +161,14 @@
 
     $(function() {
 
-        CurrentPlayer = new VideoPlayers["Youtube"]({ embed: "player" });
+        CurrentPlayer = new YoutubePlayer({embed: "player"});
         CurrentPlayer.on('videoend', function() {
             console.log('video ended!')
             PlayNext();
         });
 
         socket = io.connect('http://' + socket_server + '/channel');
-        socket.emit('join', { room: room_id });
+        socket.emit('join', {room: room_id});
         socket.on('video', function(data) {
             playlistView.getPlaylist().push(new Video(data));
             if (CurrentPlayer.getState() !== Player.State.PLAYING) {
@@ -186,5 +190,4 @@
         $('#qrcode').qrcode(client_url);
 
     });
-
-})(document, window, jQuery);
+});
