@@ -1,4 +1,4 @@
-Youtube DJ
+Youtube DJ ![project status](http://stillmaintained.com/Rovak/YoutubeDJ.png) 
 ==========
 
 Youtube DJ application based on Express.js, Node.js, Socket.IO and Sencha Touch
