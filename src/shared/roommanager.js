@@ -20,7 +20,7 @@ function Room(id) {
      */
     this.addVideo = function(video) {
         var dup = _.find(_playlist, function(item){
-            return item.id === video.id
+            return item.id === video.id;
         });
         if (typeof dup === 'undefined') {
             _playlist.push(video);
