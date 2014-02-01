@@ -44,7 +44,7 @@ function($, Handlebars, _, Backbone, YoutubePlayer, Player, swfobject) {
                         CurrentPlayer.setVolume(value);
                         break;
                     case 'next':
-                        PlayNext();
+                        playNext();
                         break;
                     case 'pause':
                         CurrentPlayer.Pause();
@@ -53,7 +53,6 @@ function($, Handlebars, _, Backbone, YoutubePlayer, Player, swfobject) {
                 }
             }
         }
-
     });
 
     /**

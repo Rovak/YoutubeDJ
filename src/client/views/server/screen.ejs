@@ -12,31 +12,28 @@
         var client_url = 'http://<%= host %>/room/<%= room %>';
     </script>
     <script src="http://<%= socket_server %>/socket.io/socket.io.js"></script>
-    <script data-main="/scripts/main" src="/scripts/lib/require.js"></script>
+    <script src="/scripts/lib/jquery.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
+    <script src="/scripts/lib/qrcode.js"></script>
+    <script src="/scripts/lib/angular-qrcode.js"></script>
+    <script src="/scripts/screen/app.js"></script>
   </head>
-  <body>
+  <body ng-app="djscreen" ng-controller="screen" ng-class="bodyClass">
     <div id="player_wrap">
       <div id="player"></div>
     </div>
-    <div id="playlist"></div>
-    <div id="qrcode"></div>
-
-
-    <!-- Playlist Template -->
-    <script type="text/template" id="playlist_template">
+    <div id="playlist" ng-controller="playlist">
       <img src="/img/screen-by-razko.jpg" style="width: 100%">
       <ul>
-      {{#each playlist}}
-        <li>
-          <div class="img" style="background-image: url({{this.image}});"></div>
+        <li ng-repeat="item in playlist">
+          <div class="img" style="background-image: url({{image}});"></div>
           <div class="info">
-            <span class="title">{{this.title}}</span>
-            <span class="artist">{{this.title}}</span>
+            <span class="title">{{title}}</span>
+            <span class="artist">{{title}}</span>
           </div>
         </li>
-      {{/each}}
       </ul>
-
-    </script>
+    </div>
+    <qrcode id="qrcode" data="{{qrcode}}" size="500"></qrcode>
   </body>
 </html>
