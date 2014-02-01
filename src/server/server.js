@@ -34,14 +34,12 @@ Server.onConnection = function(socket) {
 
     socket.on('join', function(data) {
         socket.join(data.room);
-        console.log("socket joined! " + data.room)
         room = Channel.in(data.room);
     });
     socket.on('video', function(data) {
         room.emit('video', data);
     });
     socket.on('screen_state', function(data) {
-        console.log("got screen state")
         room.emit('screen_state', data);
     });
 };
