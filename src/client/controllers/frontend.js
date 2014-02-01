@@ -31,5 +31,4 @@ module.exports = function(app) {
             socket_server: socket_server
         });
     });
-
-}
+};

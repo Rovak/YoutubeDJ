@@ -4,7 +4,7 @@ define([
     'player/player'
 ],
 function(Backbone, _, Player){
-    "use strict"
+    "use strict";
 
     var Youtube = {
         PlayerState: {
@@ -79,7 +79,7 @@ function(Backbone, _, Player){
 
              // Hook into the onReady callback of the youtube player
              window.onYouTubePlayerReady = function() {
-                me.player = document.getElementById(elementId)
+                me.player = document.getElementById(elementId);
                 me.player.addEventListener("onStateChange", "onStateChange");
                 me.trigger('ready');
 

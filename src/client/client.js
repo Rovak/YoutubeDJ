@@ -18,8 +18,6 @@ exports.createServer = function() {
         app.use(express.static(__dirname + '/public'));
     });
 
-    console.log(__dirname + '/../../node_modules/requirejs/require.js')
-
     app.configure('development', function() {
         app.use(express.errorHandler());
     });
@@ -28,7 +26,7 @@ exports.createServer = function() {
     var controllersFolder = __dirname + "/controllers/";
     var controllers = fs.readdirSync(controllersFolder);
 
-    for (i in controllers) {
+    for (var i in controllers) {
         var controllerPath = controllersFolder + controllers[i];
         require(controllerPath)(app);
     }

@@ -14,7 +14,7 @@ module.exports = function(app) {
     });
 
     app.post('/playlist/:room', function(req, res) {
-        roomManager.getRoom(req.params.room).setPlaylist(req.body.playlist)
+        roomManager.getRoom(req.params.room).setPlaylist(req.body.playlist);
         res.send(JSON.stringify({
             playlist: roomManager.getRoom(req.params.room).getPlaylist()
         }));

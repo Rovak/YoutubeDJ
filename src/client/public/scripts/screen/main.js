@@ -151,8 +151,7 @@ function($, Handlebars, _, Backbone, YoutubePlayer, Player, swfobject) {
         }
     });
 
-    function PlayNext()
-    {
+    function playNext() {
         var video = playlistView.getPlaylist().getNextVideo();
         if (video) {
             CurrentPlayer.PlayVideo(video);
@@ -163,8 +162,8 @@ function($, Handlebars, _, Backbone, YoutubePlayer, Player, swfobject) {
 
         CurrentPlayer = new YoutubePlayer({embed: "player"});
         CurrentPlayer.on('videoend', function() {
-            console.log('video ended!')
-            PlayNext();
+            console.log('video ended!');
+            playNext();
         });
 
         socket = io.connect('http://' + socket_server + '/channel');
@@ -172,7 +171,7 @@ function($, Handlebars, _, Backbone, YoutubePlayer, Player, swfobject) {
         socket.on('video', function(data) {
             playlistView.getPlaylist().push(new Video(data));
             if (CurrentPlayer.getState() !== Player.State.PLAYING) {
-                PlayNext();
+                playNext();
             }
         });
 
