@@ -1,9 +1,9 @@
 {
-	"socketio" : {
-		"hostname" 	: "localhost",
-		"port"		: 5000
-	},
-	"webserver" : {
-		"port"		: 3000
-	}
+  "socketio" : {
+    "hostname"  : "localhost",
+    "port"      : 5000
+  },
+  "webserver" : {
+    "port"    : 3000
+  }
 }
