@@ -1,12 +1,35 @@
 var djscreen = angular.module('djscreen', ['monospaced.qrcode']);
 
-djscreen.controller('screen', function($scope) {
 
-    $scope.showQRcode = false;
+djscreen.service('connection', ['$rootScope', function($rootScope) {
 
-    $scope.qrcode = "test";
+    var socket = io.connect('http://' + socket_server + '/channel');
+    socket.emit('join', {room: room_id});
+    socket.on('video', function(data) {
+        playlistView.getPlaylist().push(new Video(data));
+        if (CurrentPlayer.getState() !== Player.State.PLAYING) {
+            playNext();
+        }
+    });
 
-    $scope.bodyClass = 'hide-qr';
+    socket.on('screen_state', function(data) {
+        $rootScope.$broadcast('screen.state', data);
+    });
+
+}]);
+
+djscreen.controller('screen', function($scope, connection) {
+
+    $scope.qrcode = client_url;
+
+    $scope.bodyClass = '';
+
+    $scope.$on('screen.state', function(ev, data) {
+        $scope.updateState(data);
+    });
+
+    $scope.showQrCode = true;
+    $scope.showFullscreen = true;
 
     $scope.updateState = function(state) {
         var bodyClass = '';
@@ -14,10 +37,10 @@ djscreen.controller('screen', function($scope) {
             var value = state[key];
             switch (key) {
                 case 'qrcode':
-                    if (!value) bodyClass += ' hide-qr';
+                    $scope.showQrCode = value;
                     break;
                 case 'fullscreen':
-                    if (value) bodyClass += ' fullscreen';
+                    $scope.showFullscreen = value;
                     break;
                 case 'volume':
                     //CurrentPlayer.setVolume(value);
@@ -31,6 +54,15 @@ djscreen.controller('screen', function($scope) {
 
             }
         }
+
+        $scope.$apply(function(){
+            if (!$scope.showQrCode) {
+                bodyClass += ' hide-qr';
+            }
+            if ($scope.showFullscreen) bodyClass += ' fullscreen';
+            $scope.bodyClass = bodyClass;
+            console.log(bodyClass);
+        });
     };
 
 });

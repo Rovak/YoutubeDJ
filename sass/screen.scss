@@ -16,7 +16,8 @@ body {
 $sidebar-width: 430px;
 
 #player_wrap {
-    z-index: 100;
+    z-index: 1000;
+    background-color: #001923;
 	position: fixed;
 	left: 10px;
 	top: 10px;
