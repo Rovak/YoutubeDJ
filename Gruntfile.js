@@ -68,6 +68,7 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-jsduck');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-compass');
 
     grunt.registerTask('default', ['clean', 'prepare', 'compass:prod', 'jsduck']);

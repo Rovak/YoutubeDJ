@@ -18,6 +18,7 @@
     "grunt": "0.4.*",
     "grunt-jsduck": "*",
     "grunt-contrib-clean": "*",
+    "grunt-contrib-watch": "*",
     "grunt-compass": "*"
   }
 }
