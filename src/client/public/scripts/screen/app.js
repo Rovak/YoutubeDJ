@@ -1,17 +1,17 @@
-var djscreen = angular.module('djscreen', ['monospaced.qrcode']);
+(function() {
 
-/**
- * Socket.IO Connection
- */
-djscreen.factory('connection', ['$rootScope', function($rootScope) {
+    var djscreen = angular.module('djscreen', ['monospaced.qrcode']);
 
-    var socket = io.connect('http://' + socket_server + '/channel');
-    socket.emit('join', {room: room_id});
+    /**
+     * Socket.IO Connection
+     */
+    djscreen.factory('connection', ['$rootScope', function($rootScope) {
 
-    return socket;
-}]);
+        var socket = io.connect('http://' + socket_server + '/channel');
+        socket.emit('join', {room: room_id});
 
-djscreen.directive('youtube', [function () {
+        return socket;
+    }]);
 
     var Youtube = {
         PlayerState: {
@@ -31,135 +31,174 @@ djscreen.directive('youtube', [function () {
         }
     };
 
-    return {
-        restrict:'A',
-        require: 'ngModel',
-        scope: {
-            model: '=ngModel'
-        },
-        link: function (scope, element, ngModel) {
-            var me          = this,
-                elementId   = 'youtube-player-1',
-                params      = { allowScriptAccess: "always" },
-                attrs       = { id: elementId },
-                isReady     = false,
-                player;
+    var Player = {
+        State: {
+            ENDED: 0,
+            PLAYING: 1,
+            PAUSED: 2,
+            BUFFERING: 3
+        }
+    };
 
-            element.context.id = elementId;
+    djscreen.directive('youtube', [function () {
 
-            swfobject.embedSWF(
-                "http://www.youtube.com/apiplayer?enablejsapi=1&version=3",
-                elementId, "100%", "100%", "8", null, null, params, attrs);
+        return {
+            restrict:'A',
+            require: 'ngModel',
+            scope: {
+                model: '=ngModel'
+            },
+            link: function (scope, element, ngModel) {
+                var me          = this,
+                    elementId   = 'youtubeplayer_1',
+                    params      = { allowScriptAccess: "always" },
+                    attrs       = { id: elementId },
+                    isReady     = false,
+                    player;
 
-            scope.$watch('model.video', function(newValue, oldValue) {
-                if (!isReady) return;
-                player.loadVideoById({
-                    videoId: newValue.id,
-                    suggestedQuality: Youtube.PlaybackQuality.HD720
+                element.context.id = elementId;
+
+                swfobject.embedSWF(
+                    "http://www.youtube.com/apiplayer?enablejsapi=1&version=3",
+                    elementId, "100%", "100%", "8", null, null, params, attrs);
+
+                scope.$watch('model.video', function(newValue, oldValue) {
+                    if (!isReady) return;
+                    player.loadVideoById({
+                        videoId: newValue.id,
+                        suggestedQuality: Youtube.PlaybackQuality.HD720
+                    });
                 });
-            });
 
-             // Hook into the onReady callback of the youtube player
-             window.onYouTubePlayerReady = function() {
-
-                player = document.getElementById(elementId);
-                player.addEventListener("onStateChange", "onStateChange");
-
-                window.onStateChange = function(newState) {
-                    switch (newState) {
-                        case Youtube.PlayerState.ENDED:
-                            me.setState(Player.State.ENDED);
-                            me.trigger('videoend');
-                            break;
-                        case Youtube.PlayerState.PLAYING:
-                            me.setState(Player.State.PLAYING);
-                            break;
-                        case Youtube.PlayerState.PAUSED:
-                            me.setState(Player.State.PAUSED);
-                            break;
-                        case Youtube.PlayerState.BUFFERING:
-                            me.setState(Player.State.BUFFERING);
+                scope.$watch('model.state', function(newValue, oldValue) {
+                    if (!isReady) return;
+                    switch(newValue) {
+                        case Player.State.PAUSED:
+                            player.Pause();
                             break;
                     }
+                });
+
+                scope.$watch('model.volume', function(newValue, oldValue) {
+                    if (!isReady) return;
+                    player.setVolume(newValue);
+                });
+
+                 // Hook into the onReady callback of the youtube player
+                 window.onYouTubePlayerReady = function() {
+
+                    var methodName = elementId + '_onStateChange';
+
+                    player = document.getElementById(elementId);
+                    player.addEventListener('onStateChange', methodName);
+
+                    window[methodName] = function(newState) {
+                        scope.$apply(function(){
+                            switch (newState) {
+                                case Youtube.PlayerState.ENDED:
+                                    scope.model.state = Player.State.ENDED;
+                                    break;
+                                case Youtube.PlayerState.PLAYING:
+                                    scope.model.state = Player.State.PLAYING;
+                                    break;
+                                case Youtube.PlayerState.PAUSED:
+                                    scope.model.state = Player.State.PAUSED;
+                                    break;
+                                case Youtube.PlayerState.BUFFERING:
+                                    scope.model.state = Player.State.BUFFERING;
+                                    break;
+                            }
+                        });
+                    };
+
+                    isReady = true;
                 };
-
-                isReady = true;
-            };
-        }
-    };
-}]);
-
-/**
- * DJ Screen Controller
- */
-djscreen.controller('screen', function($scope, connection) {
-
-    $scope.qrcode = client_url;
-
-    $scope.bodyClass = '';
-
-    $scope.player = {
-        video: 'asdfasf'
-    };
-
-    connection.on('screen_state', function(data) {
-        $scope.updateState(data);
-    });
-
-    connection.on('video', function(data) {
-        $scope.$apply(function() {
-            $scope.player.video = data;
-        });
-    });
-
-    $scope.showQrCode = true;
-
-    $scope.showFullscreen = true;
-
-    $scope.updateState = function(state) {
-        var bodyClass = '';
-        for (var key in state) {
-            var value = state[key];
-            switch (key) {
-                case 'qrcode':
-                    $scope.showQrCode = value;
-                    break;
-                case 'fullscreen':
-                    $scope.showFullscreen = value;
-                    break;
-                case 'volume':
-                    //CurrentPlayer.setVolume(value);
-                    break;
-                case 'next':
-                    //playNext();
-                    break;
-                case 'pause':
-                    //CurrentPlayer.Pause();
-                    break;
             }
-        }
+        };
+    }]);
 
-        $scope.$apply(function(){
-            if (!$scope.showQrCode) {
-                bodyClass += ' hide-qr';
+    /**
+     * DJ Screen Controller
+     */
+    djscreen.controller('screen', function($scope, connection) {
+
+        $scope.qrcode = client_url;
+
+        $scope.bodyClass = '';
+
+        $scope.player = {
+            video: 'asdfasf'
+        };
+
+        connection.on('screen_state', function(data) {
+            $scope.$apply(function() {
+                $scope.updateState(data);
+            });
+        });
+
+        connection.on('video', function(data) {
+            $scope.$apply(function() {
+                $scope.addVideo(data);
+            });
+        });
+
+        $scope.showQrCode = true;
+
+        $scope.showFullscreen = true;
+
+        $scope.playlist = [];
+
+        /**
+         * Add a new video
+         */
+        $scope.addVideo = function(video) {
+            if ($scope.player.state !== Youtube.PlayerState.PLAYING) {
+                $scope.player.video = video;
+            } else {
+                $scope.playlist.push(video);
             }
-            if ($scope.showFullscreen) bodyClass += ' fullscreen';
-            $scope.bodyClass = bodyClass;
-            console.log(bodyClass);
-        });
-    };
-});
+        };
 
-/**
- * DJ Screen
- */
-djscreen.controller('playlist', function($scope, connection) {
+        $scope.updateState = function(state) {
+            var bodyClass = '';
+            for (var key in state) {
+                var value = state[key];
+                switch (key) {
+                    case 'qrcode':
+                        $scope.showQrCode = value;
+                        break;
+                    case 'fullscreen':
+                        $scope.showFullscreen = value;
+                        break;
+                    case 'volume':
+                        $scope.player.volume = value;
+                        break;
+                    case 'next':
+                        if ($scope.playlist.length) {
+                            $scope.player.video = $scope.playlist.shift();
+                        }
+                        break;
+                    case 'pause':
+                        $scope.player.state = Player.State.PAUSED;
+                        break;
+                }
+            }
 
-    $scope.playlist = [];
-
-    connection.on('video', function(data) {
-        $scope.$apply(function() {
-            $scope.playlist.push(data);
-        });
+            $scope.$apply(function(){
+                if (!$scope.showQrCode) {
+                    bodyClass += ' hide-qr';
+                }
+                if ($scope.showFullscreen) bodyClass += ' fullscreen';
+                $scope.bodyClass = bodyClass;
+            });
+        };
     });
-});
+
+    /**
+     * DJ Screen
+     */
+    djscreen.controller('playlist', function($scope, connection) {
+
+    });
+
+})();
