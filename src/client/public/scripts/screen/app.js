@@ -12,17 +12,38 @@ djscreen.factory('connection', ['$rootScope', function($rootScope) {
 }]);
 
 djscreen.directive('youtube', [function () {
+
+    var Youtube = {
+        PlayerState: {
+            UNSTARTED: -1,
+            ENDED: 0,
+            PLAYING: 1,
+            PAUSED: 2,
+            BUFFERING: 3,
+            CUED: 5
+        },
+        PlaybackQuality: {
+            HD1080: 'hd1080',
+            HD720: 'hd720',
+            LARGE: 'large',
+            MEDIUM: 'medium',
+            SMALL: 'small'
+        }
+    };
+
     return {
         restrict:'A',
         require: 'ngModel',
         scope: {
-            ngModel: '='
+            model: '=ngModel'
         },
         link: function (scope, element, ngModel) {
             var me          = this,
                 elementId   = 'youtube-player-1',
                 params      = { allowScriptAccess: "always" },
-                attrs       = { id: elementId };
+                attrs       = { id: elementId },
+                isReady     = false,
+                player;
 
             element.context.id = elementId;
 
@@ -30,11 +51,19 @@ djscreen.directive('youtube', [function () {
                 "http://www.youtube.com/apiplayer?enablejsapi=1&version=3",
                 elementId, "100%", "100%", "8", null, null, params, attrs);
 
+            scope.$watch('model.video', function(newValue, oldValue) {
+                if (!isReady) return;
+                player.loadVideoById({
+                    videoId: newValue.id,
+                    suggestedQuality: Youtube.PlaybackQuality.HD720
+                });
+            });
+
              // Hook into the onReady callback of the youtube player
              window.onYouTubePlayerReady = function() {
-                me.player = document.getElementById(elementId);
-                me.player.addEventListener("onStateChange", "onStateChange");
-                me.trigger('ready');
+
+                player = document.getElementById(elementId);
+                player.addEventListener("onStateChange", "onStateChange");
 
                 window.onStateChange = function(newState) {
                     switch (newState) {
@@ -53,6 +82,8 @@ djscreen.directive('youtube', [function () {
                             break;
                     }
                 };
+
+                isReady = true;
             };
         }
     };
@@ -67,20 +98,19 @@ djscreen.controller('screen', function($scope, connection) {
 
     $scope.bodyClass = '';
 
+    $scope.player = {
+        video: 'asdfasf'
+    };
+
     connection.on('screen_state', function(data) {
         $scope.updateState(data);
     });
 
     connection.on('video', function(data) {
-        playlistView.getPlaylist().push(new Video(data));
-        if (CurrentPlayer.getState() !== Player.State.PLAYING) {
-            playNext();
-        }
+        $scope.$apply(function() {
+            $scope.player.video = data;
+        });
     });
-
-    $scope.player = {
-        video: 'asdfasf'
-    };
 
     $scope.showQrCode = true;
 
@@ -123,9 +153,13 @@ djscreen.controller('screen', function($scope, connection) {
 /**
  * DJ Screen
  */
-djscreen.controller('playlist', function($scope) {
+djscreen.controller('playlist', function($scope, connection) {
 
-    $scope.playlist = [
-        { title: 'test', image: 'etsf' }
-    ];
+    $scope.playlist = [];
+
+    connection.on('video', function(data) {
+        $scope.$apply(function() {
+            $scope.playlist.push(data);
+        });
+    });
 });

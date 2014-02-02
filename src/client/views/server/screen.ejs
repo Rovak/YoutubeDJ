@@ -28,10 +28,10 @@
       <img src="/img/screen-by-razko.jpg" style="width: 100%">
       <ul>
         <li ng-repeat="item in playlist">
-          <div class="img" style="background-image: url({{image}});"></div>
+          <div class="img" style="background-image: url({{item.image}});"></div>
           <div class="info">
-            <span class="title">{{title}}</span>
-            <span class="artist">{{title}}</span>
+            <span class="title">{{item.title}}</span>
+            <span class="artist">{{item.title}}</span>
           </div>
         </li>
       </ul>
