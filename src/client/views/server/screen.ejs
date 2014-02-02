@@ -16,11 +16,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
     <script src="/scripts/lib/qrcode.js"></script>
     <script src="/scripts/lib/angular-qrcode.js"></script>
+    <script src="/scripts/lib/swfobject/swfobject.js"></script>
     <script src="/scripts/screen/app.js"></script>
   </head>
   <body ng-app="djscreen" ng-controller="screen" ng-class="bodyClass">
     <div id="player_wrap">
-      <div id="player"></div>
+      <div id="player" youtube-player></div>
+      <div ng-model="player" youtube></div>
     </div>
     <div id="playlist" ng-controller="playlist">
       <img src="/img/screen-by-razko.jpg" style="width: 100%">
