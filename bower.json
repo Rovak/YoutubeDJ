@@ -16,6 +16,10 @@
     "tests"
   ],
   "dependencies": {
-    "ionic": "~0.9.27"
+    "ionic": "~0.9.27",
+    "lodash": "~3.7.0",
+    "jquery": "~2.1.3",
+    "swfobject": "*",
+    "angular-qrcode": "~5.1.0"
   }
 }
