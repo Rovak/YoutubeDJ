@@ -12,19 +12,20 @@
         var client_url = 'http://<%= host %>/room/<%= room %>';
     </script>
     <script src="http://<%= socket_server %>/socket.io/socket.io.js"></script>
-    <script src="/scripts/lib/jquery.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
-    <script src="/scripts/lib/qrcode.js"></script>
-    <script src="/scripts/lib/angular-qrcode.js"></script>
-    <script src="/scripts/lib/swfobject/swfobject.js"></script>
+    <script src="/lib/jquery/dist/jquery.js"></script>
+    <script src="/lib/angular/angular.js"></script>
+    <script src="/lib/qrcode-generator/js/qrcode.js"></script>
+    <script src="/lib/angular-qrcode/qrcode.js"></script>
+    <script src="/lib/swfobject/swfobject/swfobject.js"></script>
+    <script src="/lib/lodash/lodash.js"></script>
     <script src="/scripts/screen/app.js"></script>
+
   </head>
-  <body ng-app="djscreen" ng-controller="screen" ng-class="bodyClass">
+  <body ng-app="djscreen" ng-controller="screen" ng-class="{ 'hide-qr': !showQrCode, 'fullscreen': showFullscreen }">
     <div id="player_wrap">
-      <div id="player" youtube-player></div>
-      <div ng-model="player" youtube></div>
+      <div id="player"></div>
     </div>
-    <div id="playlist" ng-controller="playlist">
+    <div id="playlist" ng-controller="playlistCtrl">
       <img src="/img/screen-by-razko.jpg" style="width: 100%">
       <ul>
         <li ng-repeat="item in playlist">

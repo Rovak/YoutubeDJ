@@ -1,0 +1,19 @@
+ <ion-view view-title="Search">
+    <ion-content class="padding">
+        <div class="list list-inset">
+          <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <form ng-submit="doSearch(searchQuery)">
+                <input type="text" placeholder="Search" ng-model="searchQuery">
+            </form>
+          </label>
+        </div>
+        <div class="list">
+            <a class="item item-thumbnail-left" ng-repeat="item in results" ng-click="playSong(item)">
+              <img ng-src="{{item.thumbnail.hqDefault}}">
+              <h2>{{item.title}}</h2>
+              <p>Nine Inch Nails</p>
+            </a>
+        </div>
+    </ion-content>
+</ion-view>

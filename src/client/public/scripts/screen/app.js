@@ -1,19 +1,9 @@
-(function() {
+var djscreen = angular.module('djscreen', ['monospaced.qrcode']);
 
-    var djscreen = angular.module('djscreen', ['monospaced.qrcode']);
+djscreen.factory('youtubeplayer', function() {
+    "use strict";
 
-    /**
-     * Socket.IO Connection
-     */
-    djscreen.factory('connection', ['$rootScope', function($rootScope) {
-
-        var socket = io.connect('http://' + socket_server + '/channel');
-        socket.emit('join', {room: room_id});
-
-        return socket;
-    }]);
-
-    var Youtube = {
+    window.Youtube = {
         PlayerState: {
             UNSTARTED: -1,
             ENDED: 0,
@@ -31,174 +21,230 @@
         }
     };
 
-    var Player = {
-        State: {
-            ENDED: 0,
-            PLAYING: 1,
-            PAUSED: 2,
-            BUFFERING: 3
+
+    /**
+     * @class VideoPlayers.Youtube
+     */
+    var YoutubePlayer = function(data) {
+        data = data || {};
+
+        if (data.embed) {
+            this.embed(data.embed);
         }
     };
 
-    djscreen.directive('youtube', [function () {
-
-        return {
-            restrict:'A',
-            require: 'ngModel',
-            scope: {
-                model: '=ngModel'
-            },
-            link: function (scope, element, ngModel) {
-                var me          = this,
-                    elementId   = 'youtubeplayer_1',
-                    params      = { allowScriptAccess: "always" },
-                    attrs       = { id: elementId },
-                    isReady     = false,
-                    player;
-
-                element.context.id = elementId;
-
-                swfobject.embedSWF(
-                    "http://www.youtube.com/apiplayer?enablejsapi=1&version=3",
-                    elementId, "100%", "100%", "8", null, null, params, attrs);
-
-                scope.$watch('model.video', function(newValue, oldValue) {
-                    if (!isReady) return;
-                    player.loadVideoById({
-                        videoId: newValue.id,
-                        suggestedQuality: Youtube.PlaybackQuality.HD720
-                    });
-                });
-
-                scope.$watch('model.state', function(newValue, oldValue) {
-                    if (!isReady) return;
-                    switch(newValue) {
-                        case Player.State.PAUSED:
-                            player.Pause();
-                            break;
-                    }
-                });
-
-                scope.$watch('model.volume', function(newValue, oldValue) {
-                    if (!isReady) return;
-                    player.setVolume(newValue);
-                });
-
-                 // Hook into the onReady callback of the youtube player
-                 window.onYouTubePlayerReady = function() {
-
-                    var methodName = elementId + '_onStateChange';
-
-                    player = document.getElementById(elementId);
-                    player.addEventListener('onStateChange', methodName);
-
-                    window[methodName] = function(newState) {
-                        scope.$apply(function(){
-                            switch (newState) {
-                                case Youtube.PlayerState.ENDED:
-                                    scope.model.state = Player.State.ENDED;
-                                    break;
-                                case Youtube.PlayerState.PLAYING:
-                                    scope.model.state = Player.State.PLAYING;
-                                    break;
-                                case Youtube.PlayerState.PAUSED:
-                                    scope.model.state = Player.State.PAUSED;
-                                    break;
-                                case Youtube.PlayerState.BUFFERING:
-                                    scope.model.state = Player.State.BUFFERING;
-                                    break;
-                            }
-                        });
-                    };
-
-                    isReady = true;
-                };
-            }
-        };
-    }]);
-
     /**
-     * DJ Screen Controller
+     * @event ready
+     * Triggers when the Youtube players is fully loaded and ready to use
      */
-    djscreen.controller('screen', function($scope, connection) {
-
-        $scope.qrcode = client_url;
-
-        $scope.bodyClass = '';
-
-        $scope.player = {
-            video: 'asdfasf'
-        };
-
-        connection.on('screen_state', function(data) {
-            $scope.$apply(function() {
-                $scope.updateState(data);
-            });
-        });
-
-        connection.on('video', function(data) {
-            $scope.$apply(function() {
-                $scope.addVideo(data);
-            });
-        });
-
-        $scope.showQrCode = true;
-
-        $scope.showFullscreen = true;
-
-        $scope.playlist = [];
+    /**
+     * @event statechange
+     * Triggers when the state of the player changes
+     * @param {Number} state New player state
+     */
+    _.extend(YoutubePlayer.prototype, {
 
         /**
-         * Add a new video
+         * A reference to the Youtubeplayer
+         *
+         * @property {DocumentElement}
+         * @protected
          */
-        $scope.addVideo = function(video) {
-            if ($scope.player.state !== Youtube.PlayerState.PLAYING) {
-                $scope.player.video = video;
-            } else {
-                $scope.playlist.push(video);
-            }
-        };
+        player: null,
 
-        $scope.updateState = function(state) {
-            var bodyClass = '';
-            for (var key in state) {
-                var value = state[key];
-                switch (key) {
-                    case 'qrcode':
-                        $scope.showQrCode = value;
-                        break;
-                    case 'fullscreen':
-                        $scope.showFullscreen = value;
-                        break;
-                    case 'volume':
-                        $scope.player.volume = value;
-                        break;
-                    case 'next':
-                        if ($scope.playlist.length) {
-                            $scope.player.video = $scope.playlist.shift();
-                        }
-                        break;
-                    case 'pause':
-                        $scope.player.state = Player.State.PAUSED;
-                        break;
-                }
-            }
+        /**
+         * The current state of the player
+         *
+         * @property {Number}
+         * @protected
+         */
+        currentState: Youtube.PlayerState.ENDED,
 
-            $scope.$apply(function(){
-                if (!$scope.showQrCode) {
-                    bodyClass += ' hide-qr';
-                }
-                if ($scope.showFullscreen) bodyClass += ' fullscreen';
-                $scope.bodyClass = bodyClass;
+        /**
+         * @method
+         * @param {String} elementId elementId where the player should be created
+         */
+        embed: function(elementId) {
+
+            var me      = this,
+                params  = { allowScriptAccess: "always" },
+                atts    = { id: elementId };
+
+            swfobject.embedSWF(
+                "http://www.youtube.com/apiplayer?enablejsapi=1&version=3",
+                elementId, "100%", "100%", "8", null, null, params, atts);
+
+             // Hook into the onReady callback of the youtube player
+             window.onYouTubePlayerReady = function() {
+
+                me.player = document.getElementById(elementId);
+                me.player.addEventListener("onStateChange", "onStateChange");
+
+                window.onStateChange = function(newState) {
+                    me.setState(newState)
+                };
+            };
+        },
+
+
+        /**
+         * Returns the current state of the player
+         *
+         * @method
+         * @return {integer}
+         */
+        getState: function() {
+            return this.currentState;
+        },
+
+        /**
+         * Set the current state
+         * @method
+         */
+        setState: function(newState) {
+            this.currentState = newState;
+        },
+
+        /**
+         * Set the volume of the player
+         *
+         * @method
+         * @param {integer} volume Volume between 0-100
+         */
+        setVolume: function(volume) {
+            if (this.player) {
+                this.player.setVolume(volume);
+            }
+        },
+
+        /**
+         * Play a video
+         *
+         * @method
+         * @param {Video} video
+         */
+        PlayVideo: function(video) {
+            if (this.player) {
+                this.player.loadVideoById({
+                    videoId: video.get('id'),
+                    suggestedQuality: Youtube.PlaybackQuality.HD720
+                });
+            }
+        },
+
+        /**
+         * @method
+         * Pause the current player
+         */
+        Pause: function() {
+            if (this.player) {
+                this.player.pauseVideo();
+            }
+        }
+    });
+
+    var newPlayer = new YoutubePlayer({ 
+        embed: 'player'
+    });
+
+    return newPlayer;
+});
+
+
+djscreen.service('connection', function($rootScope) {
+
+    var socket = io.connect('http://' + socket_server + '/channel');
+    socket.emit('join', {room: room_id});
+    socket.on('screen_state', function(data) {
+        $rootScope.$broadcast('screen.state', data);
+    });
+
+    return {
+        on: function(name, func) {
+            socket.on(name, func);  
+        }
+    };
+});
+
+djscreen.controller('screen', function($scope, connection) {
+
+    $scope.qrcode = client_url;
+
+    $scope.bodyClass = '';
+
+    $scope.$on('screen.state', function(ev, data) {
+        $scope.$apply(function(){ 
+            $scope.updateState(data);
+        });
+    });
+
+    $scope.showQrCode = true;
+    $scope.showFullscreen = false;
+
+    $scope.updateState = function(state) {
+        for (var key in state) {
+            var value = state[key];
+            switch (key) {
+                case 'qrcode':
+                    $scope.showQrCode = value;
+                    break;
+                case 'fullscreen':
+                    $scope.showFullscreen = value;
+                    break;
+                case 'volume':
+                    //CurrentPlayer.setVolume(value);
+                    break;
+                case 'next':
+                    //playNext();
+                    break;
+                case 'pause':
+                    //CurrentPlayer.Pause();
+                    break;
+
+            }
+        }
+    };
+
+});
+
+/**
+ * DJ Screen
+ */
+djscreen.controller('playlistCtrl', function($scope, $http, connection, youtubeplayer) {
+
+    $scope.playlist = [];
+
+    $scope.load = function() {
+        $http
+            .get('/playlist/' + room_id)
+            .success(function(result){
+                $scope.playlist = result.playlist;
             });
-        };
+    };
+
+    $scope.getNextVideo = function() {
+        return $scope.playlist.shift();
+    };
+
+    connection.on('video', function(data) {
+        $scope.$apply(function() {
+            $scope.playlist.push(data);
+            console.log($scope.playlist);
+            if (youtubeplayer.getState() !== Youtube.PlayerState.PLAYING) {
+                $scope.playNext();
+            }    
+        });
     });
 
-    /**
-     * DJ Screen
-     */
-    djscreen.controller('playlist', function($scope, connection) {
+    $scope.playNext = function() {
+        var video = $scope.getNextVideo();
+        if (video) {
+            youtubeplayer.player.loadVideoById({
+                videoId: video.id,
+                suggestedQuality: Youtube.PlaybackQuality.HD720
+            });
+        }
+    };
 
-    });
-
-})();
+    $scope.load();
+});
