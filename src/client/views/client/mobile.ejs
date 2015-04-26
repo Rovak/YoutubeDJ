@@ -2,14 +2,17 @@
 <html>
   <head>
     <title>DJ Client</title>
-    <link href="http://cdn.sencha.io/touch/sencha-touch-2.1.0/resources/css/sencha-touch.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   </head>
-  <body>
+  <body ng-app="youtubedj">
 
     <script src="http://<%= socket_server %>/socket.io/socket.io.js"></script>
-    <script src="http://cdn.sencha.io/touch/sencha-touch-2.1.0/sencha-touch-all-debug.js"></script>
+    <link href="/lib/ionic/release/css/ionic.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+    <!-- ionic/angularjs js -->
+    <script src="/lib/ionic/release/js/ionic.bundle.js"></script>
 
     <script>
         var socket = io.connect('http://<%= socket_server %>/channel'),
@@ -19,6 +22,10 @@
           });
 
     </script>
+    <script src="/mobile/controllers.js"></script>
     <script src="/mobile/app.js"></script>
+
+    <ion-nav-view></ion-nav-view>
+
   </body>
 </html>
